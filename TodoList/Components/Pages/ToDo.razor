@@ -1,0 +1,83 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<h3>To-do List (@todos.Count(todo => !todo.IsDone))</h3>
+
+<div class="inputs">
+    <input placeholder="Title" @bind="newTitle" />
+    <input placeholder="Description" @bind="newDesc" />
+    <button @onclick="AddTodo">Add to-do</button>
+    <button @onclick="ToggleDisplay">Toggle Completed Tasks</button>
+</div>
+<p></p>
+<style>
+    li {
+        list-style-type: none;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+    }
+
+    ,
+    input[type=checkbox] {
+        padding: 30px;
+    }
+
+    ,
+    #class {
+        margin-bottom: 300px;
+    }
+</style>
+<ul>
+    @foreach (var todo in todos)
+    {
+        if (showAll || !todo.IsDone)
+        {
+            <li>
+                <h3>
+                    <input type="checkbox" @bind="todo.IsDone" />
+                    @todo.Title
+                    <input placeholder="Description" @bind="todo.Description" />
+                    <input type="date" @bind="todo.DueDate" />
+                    <button @onclick="() => DeleteTodo(todo)">X</button>
+                </h3>
+            </li>
+        }
+    }
+</ul>
+
+@code {
+    private List<TodoItem> todos = new();
+    string newTitle = "";
+    string newDesc = "";
+    bool showAll = true;
+
+    void AddTodo()
+    {
+        if (!string.IsNullOrWhiteSpace(newDesc) && !string.IsNullOrWhiteSpace(newTitle))
+        {
+            todos.Add(new TodoItem { Title = newTitle, Description = newDesc, DueDate = DateTime.Today });
+            newTitle = string.Empty;
+            newDesc = string.Empty;
+        }
+    }
+
+    void DeleteTodo(TodoItem todo)
+    {
+        todos.Remove(todo);
+    }
+
+    void ToggleDisplay()
+    {
+        showAll = !showAll;
+    }
+
+    public class TodoItem
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public bool IsDone { get; set; }
+        public DateTime DueDate { get; set; } = DateTime.Today;
+    }
+}
