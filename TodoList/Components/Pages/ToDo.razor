@@ -4,12 +4,14 @@
 <h3>To-do List (@todos.Count(todo => !todo.IsDone))</h3>
 
 <div class="inputs">
+    <!-- Input for the new task info -->
     <input placeholder="Title" @bind="newTitle" />
     <input placeholder="Description" @bind="newDesc" />
     <button @onclick="AddTodo">Add to-do</button>
     <button @onclick="ToggleDisplay">Toggle Completed Tasks</button>
 </div>
 <p></p>
+
 <style>
     li {
         list-style-type: none;
@@ -19,27 +21,30 @@
         font-size: 1.5rem;
     }
 
-    ,
     input[type=checkbox] {
         padding: 30px;
     }
 
-    ,
     #class {
         margin-bottom: 300px;
     }
 </style>
+
 <ul>
+    <!-- Loop through each todo item in the list -->
     @foreach (var todo in todos)
     {
+        <!-- Display the item based on the showAll flag and completion status -->
         if (showAll || !todo.IsDone)
         {
             <li>
                 <h3>
+                    <!-- Checkbox to mark the task as done/undone -->
                     <input type="checkbox" @bind="todo.IsDone" />
                     @todo.Title
                     <input placeholder="Description" @bind="todo.Description" />
                     <input type="date" @bind="todo.DueDate" />
+                    <!-- Button to delete the task -->
                     <button @onclick="() => DeleteTodo(todo)">X</button>
                 </h3>
             </li>
@@ -48,31 +53,40 @@
 </ul>
 
 @code {
+    // List to store the to-do items
     private List<TodoItem> todos = new();
+    // Variables to hold the new task title and description
     string newTitle = "";
     string newDesc = "";
+    // Flag to indicate whether to show all tasks or only incomplete ones
     bool showAll = true;
 
+    // Method to add a new to-do item
     void AddTodo()
     {
+        // Add the new item only if title and description are not empty
         if (!string.IsNullOrWhiteSpace(newDesc) && !string.IsNullOrWhiteSpace(newTitle))
         {
             todos.Add(new TodoItem { Title = newTitle, Description = newDesc, DueDate = DateTime.Today });
+            // Clear the input fields after adding the item
             newTitle = string.Empty;
             newDesc = string.Empty;
         }
     }
 
+    // Method to delete a to-do item
     void DeleteTodo(TodoItem todo)
     {
         todos.Remove(todo);
     }
 
+    // Method to toggle the display of completed tasks
     void ToggleDisplay()
     {
         showAll = !showAll;
     }
 
+    // Class to represent a to-do item
     public class TodoItem
     {
         public string Title { get; set; }
